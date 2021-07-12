@@ -1,0 +1,62 @@
+nagios installation on aws ec2 instance step by step (NOTE:in this i used aws linux not ubuntu,  and below serial numbers
+are not in order ,so not to worry just follow the commands step by step)    
+
+
+
+    1  yum update -y              		--------> to update machine/ec2
+    2  yum install httpd php -y       		--------> install httpd and php
+    3  yum install gcc glibc glibc-common -y  	---> compiler
+    4  yum install gd gd-devel -y   		----->development
+    5  useradd -m nagios 		        ------>-m = home directory for nagios
+    6  passwd nagios
+       passwd:11111
+       re type: 11111
+    7  groupadd nagioscmd               
+    8  usermod -a -G nagioscmd nagios
+    9  usermod -a -G nagioscmd apache
+   10  mkdir ~/downloads       			-------->home directory
+   11  cd ~/downloads
+   12  wget http://prdownloads.sourceforge.net/sourceforge/nagios/nagios-4.0.8.tar.gz   --------> nagios software
+   13  wget http://nagios-plugins.org/download/nagios-plugins-2.0.3.tar.gz              --------> nagios plugins
+   17  tar zxvf nagios-4.0.8.tar.gz
+   18  cd nagios-4.0.8
+   19  ls
+   20  ./configure --with-command-group=nagioscmd   ------> to config in group
+   21  make all                                     -------> compile it into machine
+   22  make install
+   23  make install-init
+   24  make install-config
+   25  make install-commandmode
+   26  vi /usr/local/nagios/etc/objects/contacts.cfg   --------> here you can change your email,group etc
+   27  make install-webconf                            --------> configure to web
+   29  htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin  ------->  create password for nagiosadmin
+       passwd:11111
+       re type:11111
+   31  service httpd restart         
+   32  cd ~/downloads
+   34  tar zxvf nagios-plugins-2.0.3.tar.gz
+   35  cd nagios-plugins-2.0.3
+   36  ./configure --with-nagios-user=nagios --with-nagios-group=nagios
+   37  make
+   38  make install
+   41  chkconfig --add nagios
+   42  chkconfig nagios on
+   43  /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg   --->  verify the Nagios installation and configuration file
+	output:   
+	Total Warnings: 0
+	Total Errors:   0
+
+	Things look okay 
+   44  service nagios start
+   45  service httpd restart
+
+   copy public ip of ec2 instance and paste in browser(google/mozilla) and write /nagios/
+   eg:   65.2.161.151/nagios/
+   usename: nagiosadmin
+   password:11111
+
+
+
+
+
+
